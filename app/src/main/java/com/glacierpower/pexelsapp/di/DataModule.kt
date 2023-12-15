@@ -1,22 +1,22 @@
 package com.glacierpower.pexelsapp.di
 
-import android.content.Context
 import com.glacierpower.pexelsapp.data.repositoryImpl.PexelsRepositoryImpl
+import com.glacierpower.pexelsapp.data.service.GsonDeserializador
 import com.glacierpower.pexelsapp.data.service.PexelsApiService
+import com.glacierpower.pexelsapp.data.service.response.Photo
 import com.glacierpower.pexelsapp.domain.PexelsRepository
-import com.glacierpower.pexelsapp.utils.Constants.API_KEY
 import com.glacierpower.pexelsapp.utils.Constants.BASE_URL
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import okhttp3.Cache
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.io.File
 import java.util.concurrent.TimeUnit
 
 @Module
@@ -29,8 +29,6 @@ abstract class DataModule {
     ): PexelsRepository
 
     companion object {
-
-        private const val HEADER_AUTHORIZATION = "Authorization:"
 
 
         @Provides
@@ -50,35 +48,27 @@ abstract class DataModule {
         ): Retrofit {
             return Retrofit.Builder()
                 .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(
+                    GsonConverterFactory.create(
+                        GsonBuilder().registerTypeAdapter(
+                            TypeToken.getParameterized(List::class.java, Photo::class.java).type,
+                            GsonDeserializador()
+                        ).create()
+                    )
+                )
                 .client(client)
                 .build()
         }
 
         @Provides
-        fun provideOkhttpClient(
-            httpLoggingInterceptor: HttpLoggingInterceptor,
-            context: Context
-        ): OkHttpClient {
-            val httpCacheDirectory = File(context.cacheDir, "http-cache")
-            val cacheSize: Long = 10 * 1024 * 1024
-            val cache = Cache(httpCacheDirectory, cacheSize)
-
-            return OkHttpClient.Builder()
-                .addInterceptor(httpLoggingInterceptor)
-                .addInterceptor { chain ->
-                    val originalRequest = chain.request()
-
-                    val newRequestBuilder = originalRequest.newBuilder()
-                        .header(HEADER_AUTHORIZATION, API_KEY)
-
-                    val newRequest = newRequestBuilder.build()
-                    chain.proceed(newRequest)
-                }
-                .connectTimeout(5, TimeUnit.SECONDS)
-                .readTimeout(5, TimeUnit.SECONDS)
-                .cache(cache)
-                .build()
+        fun provideOkHttpClientClient(interceptor: HttpLoggingInterceptor): OkHttpClient {
+            val okHttpClient = OkHttpClient.Builder()
+                .addInterceptor(interceptor)
+                .callTimeout(60, TimeUnit.SECONDS)
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(60, TimeUnit.SECONDS)
+                .writeTimeout(60, TimeUnit.SECONDS)
+            return okHttpClient.build()
         }
 
 
@@ -86,5 +76,6 @@ abstract class DataModule {
         fun provideLoggingInterceptor(): HttpLoggingInterceptor = HttpLoggingInterceptor().apply {
             level = HttpLoggingInterceptor.Level.BODY
         }
+
     }
 }

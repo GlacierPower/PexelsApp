@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="search_item_margin">5dp</dimen>
+    <dimen name="search_view_corner">30dp</dimen>
+    <dimen name="padding_home_fragment">5dp</dimen>
+    <dimen name="corner_radius">10dp</dimen>
+    <dimen name="elevation_card_view">10dp</dimen>
+    <dimen name="margin_home_item">5dp</dimen>
+    <dimen name="search_with">350dp</dimen>
+    <dimen name="search_corner_radius">30dp</dimen>
+    <dimen name="search_height">40dp</dimen>
+    <dimen name="rv_search_height">30dp</dimen>
+    <dimen name="padding_category">2dp</dimen>
+    <dimen name="explore_text_size">24sp</dimen>
+    <dimen name="marin_no_result">10dp</dimen>
+    <dimen name="no_result_text_size">20sp</dimen>
+    <dimen name="no_result_padding_top">300dp</dimen>
+    <dimen name="explore_padding_top">10dp</dimen>
+    <dimen name="margin_top_no_connection">250dp</dimen>
+    <dimen name="no_connection_image_size">150dp</dimen>
+    <dimen name="search_item_layout_height">25dp</dimen>
+    <dimen name="bottom_nav_height">50dp</dimen>
+</resources>

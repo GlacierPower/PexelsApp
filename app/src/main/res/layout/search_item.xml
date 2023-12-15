@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="@dimen/search_item_layout_height"
+    android:layout_margin="@dimen/search_item_margin"
+    android:elevation="0dp"
+   android:clickable="true"
+    android:focusable="true"
+    android:background="@drawable/activated_color_featured_item"
+    app:cardCornerRadius="@dimen/search_corner_radius">
+
+    <LinearLayout
+        android:id="@+id/cardView"
+        android:layout_width="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:background="@drawable/activated_color_featured_item"
+        android:layout_height="@dimen/search_item_layout_height"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/categoryName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/category_name"
+            android:paddingStart="@dimen/elevation_card_view"
+            android:paddingTop="@dimen/padding_category"
+            android:paddingEnd="@dimen/elevation_card_view"
+            android:paddingBottom="@dimen/padding_category"
+            android:textAlignment="center" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

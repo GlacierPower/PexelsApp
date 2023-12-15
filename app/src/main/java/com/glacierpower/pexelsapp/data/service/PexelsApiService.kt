@@ -1,25 +1,54 @@
 package com.glacierpower.pexelsapp.data.service
 
-import com.glacierpower.pexelsapp.data.service.response.PexelsResponse
+import com.glacierpower.pexelsapp.data.service.response.CuratedPhotoResponse
+import com.glacierpower.pexelsapp.data.service.response.FeaturedCollectionResponse
+import com.glacierpower.pexelsapp.data.service.response.Photo
+import com.glacierpower.pexelsapp.data.service.response.SearchResponse
+import com.glacierpower.pexelsapp.utils.Constants.API_KEY
+import com.glacierpower.pexelsapp.utils.Constants.AUTHORIZATION
 import retrofit2.Response
 import retrofit2.http.GET
+import retrofit2.http.Headers
 import retrofit2.http.Query
 
 interface PexelsApiService {
 
 
+    @Headers("$AUTHORIZATION $API_KEY")
     @GET("curated")
     suspend fun getCurated(
         @Query("per_page") itemNum: Int,
         @Query("page") numPage: Int
-    ): Response<List<PexelsResponse>>
+    ): Response<List<Photo>>
+
+    @Headers("$AUTHORIZATION $API_KEY")
+    @GET("curated")
+    suspend fun getCuratedPhoto(
+        @Query("per_page") itemNum: Int,
+        @Query("page") numPage: Int
+    ): Response<CuratedPhotoResponse>
+
+    @Headers("$AUTHORIZATION $API_KEY")
+    @GET("search")
+    suspend fun getSearchedPhoto(
+        @Query("query") query: String?,
+        @Query("per_page") itemNum: Int,
+        @Query("page") numPage: Int
+    ): Response<SearchResponse>
 
 
+    @Headers("$AUTHORIZATION $API_KEY")
     @GET("search")
     suspend fun getSearch(
         @Query("query") query: String?,
         @Query("per_page") itemNum: Int,
         @Query("page") numPage: Int
-    ): Response<List<PexelsResponse>>
+    ): Response<List<Photo>>
 
+    @Headers("$AUTHORIZATION $API_KEY")
+    @GET("collections/featured")
+    suspend fun getFeaturedCollection(
+        @Query("page") page: Int,
+        @Query("per_page") itemNum: Int,
+    ): Response<FeaturedCollectionResponse>
 }
