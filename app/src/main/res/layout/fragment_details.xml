@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ViewFlipper xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/flipper"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".presentation.home.HomeFragment">
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipeContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".presentation.details.DetailsFragment">
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="80dp"
+                android:visibility="invisible"
+                app:layout_constraintEnd_toEndOf="@+id/cardView"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/margin_details_fragment"
+                android:layout_marginTop="@dimen/detail_image_margin_top"
+                android:layout_marginEnd="@dimen/margin_details_fragment"
+                android:elevation="@dimen/elevation_card_view"
+                app:cardCornerRadius="@dimen/corner_radius"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <com.google.android.material.imageview.ShapeableImageView
+                    android:id="@+id/photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintHorizontal_bias="0.0"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:src="@tools:sample/backgrounds/scenic" />
+            </androidx.cardview.widget.CardView>
+
+            <ImageButton
+                android:id="@+id/btn_download"
+                android:layout_width="@dimen/btn_download_width"
+                android:layout_height="@dimen/bookmark_size"
+                android:layout_marginStart="@dimen/btn_margin_details"
+                android:layout_marginTop="@dimen/margin_details_fragment"
+                android:background="@drawable/btn_download"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardView" />
+
+            <ImageButton
+                android:id="@+id/btn_bookmark"
+                android:layout_width="@dimen/bookmark_size"
+                android:layout_height="@dimen/bookmark_size"
+                android:layout_marginTop="@dimen/margin_details_fragment"
+                android:layout_marginEnd="@dimen/btn_margin_details"
+                android:background="@drawable/bookmark_inactive"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/cardView" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <LinearLayout
+            android:id="@+id/tryAgainLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <com.google.android.material.imageview.ShapeableImageView
+                android:layout_width="@dimen/no_connection_image_size"
+                android:layout_height="@dimen/no_connection_image_size"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/margin_top_no_connection"
+                android:src="@drawable/no_connection" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_try_again"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/white"
+                android:paddingTop="@dimen/explore_padding_top"
+                android:text="@string/try_again"
+                android:textColor="@color/explore_color"
+                android:textSize="@dimen/explore_text_size" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/no_result_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.google.android.material.textview.MaterialTextView
+                android:id="@+id/tv_no_result"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginBottom="@dimen/marin_no_result"
+                android:paddingTop="@dimen/no_result_padding_top"
+                android:text="@string/image_not_found"
+                android:textSize="@dimen/no_result_text_size"
+                app:layout_constraintBottom_toTopOf="@+id/btn_explore"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_explore"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/white"
+                android:paddingTop="@dimen/explore_padding_top"
+                android:text="@string/explore"
+                android:textColor="@color/explore_color"
+                android:textSize="@dimen/explore_text_size"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </LinearLayout>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+</ViewFlipper>

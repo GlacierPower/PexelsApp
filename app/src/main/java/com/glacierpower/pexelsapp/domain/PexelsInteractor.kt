@@ -9,13 +9,16 @@ import javax.inject.Inject
 
 class PexelsInteractor @Inject constructor(private val pexelsRepository: PexelsRepository) {
 
-
     suspend fun getFeaturedCollections(
         page: Int,
         per_page: Int
     ): ResultState<List<CollectionModel>> {
         return pexelsRepository.getFeaturedCollections(page, per_page)
 
+    }
+
+    suspend fun getPhotoById(id: Int): ResultState<PhotoListModel> {
+        return pexelsRepository.getPhotoById(id)
     }
 
     suspend fun getSearchedPhoto(

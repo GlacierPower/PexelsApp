@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -22,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var appBarConfiguration: AppBarConfiguration
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
@@ -42,8 +44,8 @@ class MainActivity : AppCompatActivity() {
             setOf(R.id.homeFragment)
         )
 
-        navController.addOnDestinationChangedListener{_,destination, _ ->
-            if(destination.id == R.id.homeFragment) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.homeFragment) {
                 binding.toolbar.visibility = View.GONE
             } else {
                 binding.toolbar.visibility = View.VISIBLE
@@ -57,6 +59,6 @@ class MainActivity : AppCompatActivity() {
         return navController.navigateUp(appBarConfiguration)
     }
 
-    }
+}
 
 

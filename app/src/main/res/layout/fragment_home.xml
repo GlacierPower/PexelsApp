@@ -14,7 +14,10 @@
         android:layout_height="wrap_content"
         android:animateLayoutChanges="true"
         android:orientation="vertical"
-        android:paddingTop="@dimen/padding_home_fragment">
+        android:paddingTop="@dimen/padding_home_fragment"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <androidx.appcompat.widget.SearchView
             android:id="@+id/searchView"
@@ -65,7 +68,11 @@
         android:id="@+id/no_result_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+        app:layout_constraintBottom_toTopOf="@+id/photo_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textview.MaterialTextView
             android:id="@+id/tv_no_result"
@@ -124,5 +131,8 @@
             android:textSize="@dimen/explore_text_size" />
 
     </LinearLayout>
+
+
+
 
 </ViewFlipper>

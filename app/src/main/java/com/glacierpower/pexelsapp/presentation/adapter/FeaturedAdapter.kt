@@ -32,14 +32,6 @@ class FeaturedAdapter(private val featuredListener: FeaturedListener) :
         val featured = differ.currentList[position]
         holder.bind(featured)
 
-        holder.itemView.setOnClickListener {
-            selectedPosition = position
-            notifyDataSetChanged()
-        }
-        if(selectedPosition == position)
-            holder.cardView.setBackgroundColor(Color.parseColor("#DC746C"))
-        else
-            holder.cardView.setBackgroundColor(Color.parseColor("#E49B83"))
     }
 
 

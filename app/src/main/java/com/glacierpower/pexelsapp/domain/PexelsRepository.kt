@@ -10,12 +10,13 @@ import kotlinx.coroutines.flow.Flow
 interface PexelsRepository {
 
 
-
-    suspend fun getFeaturedCollections(page:Int, per_page:Int):ResultState<List<CollectionModel>>
+    suspend fun getFeaturedCollections(page: Int, per_page: Int): ResultState<List<CollectionModel>>
 
     suspend fun getCuratedPhoto(pageNumber: Int): ResultState<List<PhotoListModel>>
 
-    suspend fun getSearchedPhoto(query: String, pageNumber: Int):ResultState<List<PhotoListModel>>
+    suspend fun getSearchedPhoto(query: String, pageNumber: Int): ResultState<List<PhotoListModel>>
+
+    suspend fun getPhotoById(id: Int): ResultState<PhotoListModel>
 
     suspend fun findPhotoById(id: Int): BookmarksEntity
 

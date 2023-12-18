@@ -9,9 +9,10 @@ import com.bumptech.glide.Glide
 import com.glacierpower.pexelsapp.R
 import com.glacierpower.pexelsapp.databinding.PhotoItemBinding
 import com.glacierpower.pexelsapp.model.PhotoListModel
+import com.glacierpower.pexelsapp.presentation.adapter.listener.CuratedListener
 
 
-class CuratedPhotoAdapter :
+class CuratedPhotoAdapter(private val curatedListener: CuratedListener) :
     RecyclerView.Adapter<CuratedPhotoAdapter.CuratedViewHolder>() {
 
     override fun onCreateViewHolder(
@@ -62,10 +63,12 @@ class CuratedPhotoAdapter :
             photoItemBinding.apply {
                 Glide.with(itemView)
                     .load(photo.src.medium)
-                    .placeholder(R.drawable.placeholder)
+                    .placeholder(R.drawable.place_holder)
                     .into(photoItemBinding.photo)
 
-
+                photoItemBinding.photo.setOnClickListener {
+                    curatedListener.getPhotoById(photo.id, photo.src.original)
+                }
             }
         }
     }

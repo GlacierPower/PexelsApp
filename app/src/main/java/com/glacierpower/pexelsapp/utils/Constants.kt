@@ -10,4 +10,5 @@ object Constants {
     const val NO_CONNECTION = "No internet connection!"
     const val ERROR = "Something went wrong! Please try again later"
     const val DELAY = 1000L
+    const val INTERNET ="Internet"
 }
