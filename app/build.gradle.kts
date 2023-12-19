@@ -46,6 +46,7 @@ android {
 dependencies {
     //Splash Screen
     implementation("androidx.core:core-splashscreen:1.0.1")
+    implementation ("com.facebook.shimmer:shimmer:0.5.0")
 
     implementation("com.google.ar.sceneform:filament-android:1.17.1")
     implementation("com.android.car.ui:car-ui-lib:2.5.1")

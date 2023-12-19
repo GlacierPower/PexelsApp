@@ -7,72 +7,54 @@
     android:layout_height="match_parent"
     tools:context=".presentation.home.HomeFragment">
 
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipeContainer"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             tools:context=".presentation.details.DetailsFragment">
 
+            <com.facebook.shimmer.ShimmerFrameLayout
+                android:id="@+id/shimmer_view"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                tools:duration="800">
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <include layout="@layout/details_item" />
+
+
+                </LinearLayout>
+
+            </com.facebook.shimmer.ShimmerFrameLayout>
             <ProgressBar
                 android:id="@+id/progressBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="80dp"
+                android:layout_marginTop="@dimen/margin_top_progress_bar"
                 android:visibility="invisible"
-                app:layout_constraintEnd_toEndOf="@+id/cardView"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cardView"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_details"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="@dimen/margin_details_fragment"
-                android:layout_marginTop="@dimen/detail_image_margin_top"
-                android:layout_marginEnd="@dimen/margin_details_fragment"
-                android:elevation="@dimen/elevation_card_view"
-                app:cardCornerRadius="@dimen/corner_radius"
+                android:layout_height="match_parent"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                tools:listitem="@layout/details_item" />
 
-                <com.google.android.material.imageview.ShapeableImageView
-                    android:id="@+id/photo"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:adjustViewBounds="true"
-                    android:scaleType="fitXY"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintHorizontal_bias="0.0"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent"
-                    tools:src="@tools:sample/backgrounds/scenic" />
-            </androidx.cardview.widget.CardView>
 
-            <ImageButton
-                android:id="@+id/btn_download"
-                android:layout_width="@dimen/btn_download_width"
-                android:layout_height="@dimen/bookmark_size"
-                android:layout_marginStart="@dimen/btn_margin_details"
-                android:layout_marginTop="@dimen/margin_details_fragment"
-                android:background="@drawable/btn_download"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardView" />
-
-            <ImageButton
-                android:id="@+id/btn_bookmark"
-                android:layout_width="@dimen/bookmark_size"
-                android:layout_height="@dimen/bookmark_size"
-                android:layout_marginTop="@dimen/margin_details_fragment"
-                android:src="@drawable/bookmark"
-                android:layout_marginEnd="@dimen/btn_margin_details"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cardView" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <LinearLayout
@@ -142,5 +124,4 @@
 
         </LinearLayout>
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </ViewFlipper>

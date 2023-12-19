@@ -1,10 +1,7 @@
 package com.glacierpower.pexelsapp.presentation.adapter
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.LinearLayout
-import android.widget.TextView
 import androidx.recyclerview.widget.AsyncListDiffer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
@@ -16,7 +13,7 @@ import com.glacierpower.pexelsapp.presentation.adapter.listener.FeaturedListener
 class FeaturedAdapter(private val featuredListener: FeaturedListener) :
     RecyclerView.Adapter<FeaturedAdapter.FeaturedViewHolder>() {
 
-    private var selectedPosition = RecyclerView.NO_POSITION
+    var isSelected: Boolean = false
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -33,7 +30,6 @@ class FeaturedAdapter(private val featuredListener: FeaturedListener) :
         holder.bind(featured)
 
     }
-
 
     private val differCallback =
         object : DiffUtil.ItemCallback<CollectionModel>() {
@@ -61,14 +57,13 @@ class FeaturedAdapter(private val featuredListener: FeaturedListener) :
 
     inner class FeaturedViewHolder(private val searchItemBinding: SearchItemBinding) :
         RecyclerView.ViewHolder(searchItemBinding.root) {
-        val itemLabel: TextView = searchItemBinding.categoryName
-        val cardView: LinearLayout = searchItemBinding.cardView
         fun bind(featured: CollectionModel) {
             searchItemBinding.apply {
                 searchItemBinding.categoryName.text = featured.title
             }
             searchItemBinding.categoryName.setOnClickListener {
                 featuredListener.getFeaturedPhoto(featured.title)
+
             }
         }
     }
