@@ -38,7 +38,10 @@ class HomeFragmentViewModel @Inject constructor(
     val search: LiveData<ResultState<List<PhotoListModel>>> get() = _search
 
     private var _explore = MutableLiveData<Boolean>()
-    val explore : LiveData<Boolean> get() = _explore
+    val explore: LiveData<Boolean> get() = _explore
+
+    private var _loading = MutableLiveData<Boolean>()
+    val loading: LiveData<Boolean> get() = _loading
 
 
     private var queryString: String? = null
@@ -52,13 +55,20 @@ class HomeFragmentViewModel @Inject constructor(
                         is ResultState.Success -> {
                             _curatedPhoto.postValue(ResultState.Success(response.data))
                             _connection.value = false
+                            _loading.value = false
                         }
 
-                        else -> {
+                        is ResultState.Loading -> {
+                            _loading.value = true
+                        }
+
+                        is ResultState.Error -> {
                             _curatedPhoto.postValue(ResultState.Error(Constants.ERROR))
-
+                            _loading.value = false
                         }
+
                     }
+
                 } else {
                     _connection.value = true
                     _curatedPhoto.postValue(ResultState.Error(Constants.NO_CONNECTION))
@@ -82,10 +92,16 @@ class HomeFragmentViewModel @Inject constructor(
                         is ResultState.Success -> {
                             _featuredCollections.postValue(ResultState.Success(response.data))
                             _connection.value = false
+                            _loading.value = false
                         }
 
-                        else -> {
+                        is ResultState.Error -> {
                             _curatedPhoto.postValue(ResultState.Error(Constants.ERROR))
+                            _loading.value = false
+                        }
+
+                        is ResultState.Loading -> {
+                            _loading.value = true
                         }
                     }
 
@@ -109,19 +125,24 @@ class HomeFragmentViewModel @Inject constructor(
                 if (internetConnection.isOnline()) {
                     when (val response = pexelsInteractor.getSearchedPhoto(query, pageNumber)) {
                         is ResultState.Success -> {
-                            if (response.data.isNullOrEmpty()){
+                            if (response.data.isNullOrEmpty()) {
                                 _explore.value = true
-                            }else{
+                            } else {
                                 _search.postValue(ResultState.Success(response.data))
                                 _connection.value = false
                                 _explore.value = false
+                                _loading.value = false
                             }
 
                         }
 
-                        else -> {
+                        is ResultState.Error -> {
+                            _loading.value = false
                             _search.postValue(ResultState.Error(Constants.ERROR))
+                        }
 
+                        is ResultState.Loading -> {
+                            _loading.value = true
                         }
                     }
                 } else {
@@ -145,13 +166,12 @@ class HomeFragmentViewModel @Inject constructor(
     }
 
     fun showHide(view: View) {
-        view.visibility = if (view.visibility == View.VISIBLE){
+        view.visibility = if (view.visibility == View.VISIBLE) {
             View.INVISIBLE
-        } else{
+        } else {
             View.VISIBLE
         }
     }
-
 
 
 }

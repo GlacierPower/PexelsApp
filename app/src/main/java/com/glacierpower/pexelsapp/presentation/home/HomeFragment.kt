@@ -10,12 +10,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+import com.glacierpower.pexelsapp.R
 import com.glacierpower.pexelsapp.databinding.FragmentHomeBinding
 import com.glacierpower.pexelsapp.presentation.adapter.CuratedPhotoAdapter
 import com.glacierpower.pexelsapp.presentation.adapter.FeaturedAdapter
+import com.glacierpower.pexelsapp.presentation.adapter.listener.CuratedListener
 import com.glacierpower.pexelsapp.presentation.adapter.listener.FeaturedListener
 import com.glacierpower.pexelsapp.presentation.utils.ScrollListener
 import com.glacierpower.pexelsapp.presentation.utils.Scroller
@@ -30,7 +33,7 @@ import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class HomeFragment : Fragment(),
-    SwipeRefreshLayout.OnRefreshListener, FeaturedListener {
+    SwipeRefreshLayout.OnRefreshListener, FeaturedListener, CuratedListener {
 
 
     private val viewModel: HomeFragmentViewModel by viewModels()
@@ -67,6 +70,8 @@ class HomeFragment : Fragment(),
         getCurated()
         connection()
         observeExploreLD()
+        loading()
+        viewModel.getFeatured()
     }
 
     private fun explore() {
@@ -135,11 +140,8 @@ class HomeFragment : Fragment(),
         viewModel.search.observe(viewLifecycleOwner, Observer { response ->
             when (response) {
                 is ResultState.Success -> {
-                    if (response.data.isNullOrEmpty()) {
-                    } else {
-                        curatedPhotoAdapter.differ.submitList(response.data)
-                        showHideProgressBar(false)
-                    }
+                    curatedPhotoAdapter.differ.submitList(response.data)
+                    showHideProgressBar(false)
 
                 }
 
@@ -150,7 +152,6 @@ class HomeFragment : Fragment(),
 
                 is ResultState.Loading -> {
                     viewBinding.tryAgainLayout.visibility = View.GONE
-                    showHideProgressBar(true)
                 }
 
             }
@@ -205,7 +206,7 @@ class HomeFragment : Fragment(),
     }
 
     private fun getFeatured() {
-        viewModel.getFeatured()
+
         viewModel.featureCollections.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is ResultState.Success -> {
@@ -238,7 +239,7 @@ class HomeFragment : Fragment(),
             adapter = featuredAdapter
         }
 
-        curatedPhotoAdapter = CuratedPhotoAdapter()
+        curatedPhotoAdapter = CuratedPhotoAdapter(this)
         viewBinding.rvPhoto.apply {
             setHasFixedSize(true)
             adapter = curatedPhotoAdapter
@@ -258,6 +259,7 @@ class HomeFragment : Fragment(),
                 if (it) {
                     viewModel.showHide(viewBinding.tryAgainLayout)
                     viewModel.showHide(viewBinding.photoLayout)
+                    toast(requireContext(), getString(R.string.no_connection))
                 } else {
                     getCurated()
                     viewBinding.tryAgainLayout.visibility = View.GONE
@@ -277,11 +279,29 @@ class HomeFragment : Fragment(),
         viewModel.getFeatured()
     }
 
+    private fun loading(){
+        viewModel.loading.observe(viewLifecycleOwner, Observer {
+            if(it){
+                viewBinding.swipeContainer.isRefreshing = it
+            }
+            else{
+                viewBinding.swipeContainer.isRefreshing !=it
+            }
+        })
+    }
+
     override fun getFeaturedPhoto(query: String) {
         viewModel.getSearchedPhoto(query)
         val str = getIntent(query).getStringExtra(query)
         viewBinding.searchView.setQuery(str, true)
         showHideProgressBar(true)
+    }
+
+    override fun getPhotoById(photoId: Int, link:String) {
+        val action = HomeFragmentDirections.actionHomeFragmentToDetailsFragment(link,photoId)
+        findNavController().navigate(
+            action
+        )
     }
 
 

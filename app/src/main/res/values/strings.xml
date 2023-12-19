@@ -11,4 +11,14 @@
     <string name="no_result_found">No result found</string>
     <string name="explore">Explore</string>
     <string name="try_again">Try Again</string>
+    <string name="file_downloaded">Photo was downloaded</string>
+    <string name="networkcapabilities_transport_cellular">NetworkCapabilities.TRANSPORT_CELLULAR</string>
+    <string name="networkcapabilities_transport_wifi">NetworkCapabilities.TRANSPORT_WIFI</string>
+    <string name="networkcapabilities_transport_ethernet">NetworkCapabilities.TRANSPORT_ETHERNET</string>
+    <string name="image">Image</string>
+    <string name="image_jpeg">image.jpeg</string>
+    <string name="mimeType">image/jpeg</string>
+    <string name="downloading_started">Downloading started</string>
+    <string name="no_connection">No connection</string>
+    <string name="image_not_found">Image not found</string>
 </resources>

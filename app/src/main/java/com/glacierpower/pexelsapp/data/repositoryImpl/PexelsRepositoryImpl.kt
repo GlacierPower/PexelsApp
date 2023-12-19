@@ -24,9 +24,9 @@ class PexelsRepositoryImpl @Inject constructor(
         page: Int,
         per_page: Int
     ): ResultState<List<CollectionModel>> {
-        val response = pexelsApiService.getFeaturedCollection(page, per_page)
+        val featuredResponse = pexelsApiService.getFeaturedCollection(page, per_page)
         return withContext(Dispatchers.IO) {
-            ResultState.Success(response.body()!!.collections.map {
+            ResultState.Success(featuredResponse.body()!!.collections.map {
                 it.toModel()
             })
         }
@@ -34,8 +34,8 @@ class PexelsRepositoryImpl @Inject constructor(
 
     override suspend fun getCuratedPhoto(pageNumber: Int): ResultState<List<PhotoListModel>> {
         return withContext(Dispatchers.IO) {
-            val response = pexelsApiService.getCuratedPhoto(ITEM_NUMBER, pageNumber)
-            ResultState.Success(response.body()!!.photos.map {
+            val curatedResponse = pexelsApiService.getCuratedPhoto(ITEM_NUMBER, pageNumber)
+            ResultState.Success(curatedResponse.body()!!.photos.map {
                 it.toModel()
             })
         }
@@ -46,10 +46,17 @@ class PexelsRepositoryImpl @Inject constructor(
         pageNumber: Int
     ): ResultState<List<PhotoListModel>> {
         return withContext(Dispatchers.IO) {
-            val response = pexelsApiService.getSearchedPhoto(query, ITEM_NUMBER, pageNumber)
-            ResultState.Success(response.body()!!.photos.map {
+            val searchResponse = pexelsApiService.getSearchedPhoto(query, ITEM_NUMBER, pageNumber)
+            ResultState.Success(searchResponse.body()!!.photos.map {
                 it.toModel()
             })
+        }
+    }
+
+    override suspend fun getPhotoById(id: Int): ResultState<PhotoListModel> {
+        return withContext(Dispatchers.IO) {
+            val photoResponse = pexelsApiService.getPhotoById(id)
+                ResultState.Success(photoResponse.body()!!.toModel())
         }
     }
 
