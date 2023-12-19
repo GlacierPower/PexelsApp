@@ -153,6 +153,7 @@ class HomeFragment : Fragment(),
                 }
 
                 is ResultState.Loading -> {
+                    viewBinding.shimmerView.startShimmer()
                     viewBinding.tryAgainLayout.visibility = View.GONE
                 }
 
@@ -190,9 +191,9 @@ class HomeFragment : Fragment(),
         viewModel.curatedPhoto.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is ResultState.Success -> {
-                    if(it.data.isNullOrEmpty()){
+                    if (it.data.isNullOrEmpty()) {
                         viewBinding.flipper.displayedChild = 1
-                    }else{
+                    } else {
                         curatedPhotoAdapter.differ.submitList(it.data)
                         showHideProgressBar(false)
                         viewBinding.flipper.displayedChild = 0

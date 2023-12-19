@@ -10,11 +10,12 @@ import com.glacierpower.pexelsapp.R
 import com.glacierpower.pexelsapp.databinding.PhotoItemBinding
 import com.glacierpower.pexelsapp.model.PhotoListModel
 import com.glacierpower.pexelsapp.presentation.adapter.listener.CuratedListener
+import com.glacierpower.pexelsapp.utils.animate
 
 
 class CuratedPhotoAdapter(private val curatedListener: CuratedListener) :
     RecyclerView.Adapter<CuratedPhotoAdapter.CuratedViewHolder>() {
-
+    private var oldposition = 0
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -29,6 +30,12 @@ class CuratedPhotoAdapter(private val curatedListener: CuratedListener) :
     override fun onBindViewHolder(holder: CuratedPhotoAdapter.CuratedViewHolder, position: Int) {
         val featured = differ.currentList[position]
         holder.bind(featured)
+        if (holder.bindingAdapterPosition > oldposition) {
+            animate(holder, true)
+        } else animate(holder, false)
+        oldposition = holder.bindingAdapterPosition
+
+
 
     }
 
@@ -57,6 +64,7 @@ class CuratedPhotoAdapter(private val curatedListener: CuratedListener) :
     }
 
 
+
     inner class CuratedViewHolder(private val photoItemBinding: PhotoItemBinding) :
         RecyclerView.ViewHolder(photoItemBinding.root) {
         fun bind(photo: PhotoListModel) {
@@ -70,6 +78,7 @@ class CuratedPhotoAdapter(private val curatedListener: CuratedListener) :
                     curatedListener.getPhotoById(photo.id, photo.src.original)
                 }
             }
+
         }
     }
 }

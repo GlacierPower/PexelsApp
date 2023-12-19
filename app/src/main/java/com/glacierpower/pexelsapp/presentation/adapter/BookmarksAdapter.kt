@@ -13,10 +13,11 @@ import com.glacierpower.pexelsapp.presentation.adapter.listener.BookmarksListene
 import com.glacierpower.pexelsapp.utils.Constants.PATH
 import com.glacierpower.pexelsapp.utils.Constants.PHOTO
 import com.glacierpower.pexelsapp.utils.Constants.TYPE
+import com.glacierpower.pexelsapp.utils.animate
 
 class BookmarksAdapter(private val bookmarksListener: BookmarksListener) :
     RecyclerView.Adapter<BookmarksAdapter.BookmarksViewHolder>() {
-
+    private var oldposition = 0
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -31,6 +32,10 @@ class BookmarksAdapter(private val bookmarksListener: BookmarksListener) :
     override fun onBindViewHolder(holder: BookmarksAdapter.BookmarksViewHolder, position: Int) {
         val photo = differ.currentList[position]
         holder.bind(photo)
+        if (holder.bindingAdapterPosition > oldposition) {
+            animate(holder, true)
+        } else animate(holder, false)
+        oldposition = holder.bindingAdapterPosition
     }
 
     private val differCallback =

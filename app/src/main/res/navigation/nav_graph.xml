@@ -17,12 +17,12 @@
     <fragment
         android:id="@+id/detailsFragment"
         android:name="com.glacierpower.pexelsapp.presentation.details.DetailsFragment"
-        android:label=""
-        tools:layout="@layout/fragment_details" >
+        android:label="Details"
+        tools:layout="@layout/fragment_details">
         <argument
             android:name="photo_id"
-            app:argType="integer"
-            android:defaultValue="1" />
+            android:defaultValue="1"
+            app:argType="integer" />
         <argument
             android:name="photo_link"
             app:argType="string" />
@@ -31,7 +31,7 @@
         android:id="@+id/bookmarksFragment"
         android:name="com.glacierpower.pexelsapp.presentation.bookmarks.BookmarksFragment"
         android:label="Bookmarks"
-        tools:layout="@layout/fragment_bookmarks" >
+        tools:layout="@layout/fragment_bookmarks">
         <action
             android:id="@+id/action_bookmarksFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />

@@ -28,4 +28,5 @@
     <dimen name="btn_margin_details">15dp</dimen>
     <dimen name="author_text_size">20sp</dimen>
     <dimen name="margin_top_bookmarks">65dp</dimen>
+    <dimen name="margin_top_progress_bar">80dp</dimen>
 </resources>

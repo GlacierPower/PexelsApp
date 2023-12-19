@@ -1,6 +1,5 @@
 package com.glacierpower.pexelsapp.presentation.details
 
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -13,10 +12,10 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.navArgs
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-import com.bumptech.glide.Glide
 import com.glacierpower.pexelsapp.R
 import com.glacierpower.pexelsapp.databinding.FragmentDetailsBinding
-import com.glacierpower.pexelsapp.presentation.MainActivity
+import com.glacierpower.pexelsapp.presentation.adapter.DetailsAdapter
+import com.glacierpower.pexelsapp.presentation.adapter.listener.DetailsListener
 import com.glacierpower.pexelsapp.utils.Constants
 import com.glacierpower.pexelsapp.utils.ImageDownloader
 import com.glacierpower.pexelsapp.utils.NavHelper.navigate
@@ -29,7 +28,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
+class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, DetailsListener {
 
     private val viewModel: DetailsViewModel by viewModels()
 
@@ -37,6 +36,8 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private var _viewBinding: FragmentDetailsBinding? = null
     private val viewBinding get() = _viewBinding!!
+
+    private lateinit var detailsAdapter: DetailsAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,23 +57,15 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewModel.getPhotoById(args.photoId)
         getPhotoById()
-
-        viewBinding.btnBookmark.setOnClickListener {
-            viewModel.favClicked(args.photoId)
-            toast(requireContext(), getString(R.string.photo_was_added_to_bookmarks))
-        }
-        viewBinding.btnDownload.setOnClickListener {
-            downloadImage(requireContext(), args.photoLink)
-            toast(requireContext(), getString(R.string.downloading_started))
-        }
-
         connection()
         observeExploreLD()
         explore()
         observeNavigate()
         navigateToHome()
+        setupRecyclerView()
 
     }
 
@@ -95,7 +88,7 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         viewModel.explore.observe(viewLifecycleOwner, Observer {
             if (it) {
                 showHide(viewBinding.noResultLayout)
-                showHide(viewBinding.swipeContainer)
+
             }
         })
     }
@@ -106,15 +99,8 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
         viewModel.details.observe(viewLifecycleOwner, Observer { photo ->
             when (photo) {
                 is ResultState.Success -> {
-                    Glide.with(viewBinding.photo)
-                        .load(photo.data.src.large)
-                        .placeholder(R.drawable.place_holder)
-                        .into(viewBinding.photo)
-                    (requireActivity() as MainActivity).supportActionBar?.title =
-                        photo.data.photographer
+                    detailsAdapter.differ.submitList(listOf(photo.data))
                     viewBinding.progressBar.visibility = View.GONE
-                    viewBinding.btnDownload.visibility = View.VISIBLE
-                    viewBinding.btnBookmark.visibility = View.VISIBLE
                 }
 
                 is ResultState.Error -> {
@@ -122,20 +108,22 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
                 }
 
                 is ResultState.Loading -> {
+                    viewBinding.shimmerView.startShimmer()
                     viewBinding.progressBar.visibility = View.VISIBLE
-                    viewBinding.btnDownload.visibility = View.GONE
-                    viewBinding.btnBookmark.visibility = View.GONE
+
                 }
             }
         })
     }
 
-    private fun downloadImage(context: Context, imageUrl: String) {
-        CoroutineScope(Dispatchers.IO).launch {
-            val downloader = ImageDownloader(context)
-            downloader.downloadImage(imageUrl)
+    private fun setupRecyclerView() {
 
+        detailsAdapter = DetailsAdapter(this)
+        viewBinding.rvDetails.apply {
+            setHasFixedSize(true)
+            adapter = detailsAdapter
         }
+
 
     }
 
@@ -164,6 +152,19 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     override fun onRefresh() {
         getPhotoById()
+    }
+
+    override fun downloadPhoto(link:String) {
+        CoroutineScope(Dispatchers.IO).launch {
+            val downloader = ImageDownloader(requireContext())
+            downloader.downloadImage(link)
+        }
+        toast(requireContext(), getString(R.string.downloading_started))
+    }
+
+    override fun addToBookmarks(id: Int) {
+        viewModel.favClicked(id)
+        toast(requireContext(), getString(R.string.photo_was_added_to_bookmarks))
     }
 
 
