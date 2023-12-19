@@ -5,5 +5,10 @@
         android:id="@+id/homeFragment"
         android:icon="@drawable/home_selector" />
 
+    <item
+        android:id="@+id/bookmarksFragment"
+        android:icon="@drawable/bookmark_inactive"
+        />
+
 
 </menu>

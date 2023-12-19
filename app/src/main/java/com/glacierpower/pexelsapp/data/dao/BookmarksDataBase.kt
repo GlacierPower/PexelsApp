@@ -5,8 +5,9 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.glacierpower.pexelsapp.data.data_base.BookmarksEntity
+import com.glacierpower.pexelsapp.data.data_base.PhotoEntity
 
-@Database(entities = [BookmarksEntity::class], version = 1, exportSchema = false)
+@Database(entities = [BookmarksEntity::class, PhotoEntity::class], version = 5, exportSchema = false)
 abstract class BookmarksDataBase : RoomDatabase() {
 
     abstract fun getBookmarksDao(): BookmarksDao

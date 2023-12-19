@@ -4,8 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import java.io.Serializable
 
-@Entity(tableName = "bookmarksEntity")
-data class BookmarksEntity(
+@Entity(tableName = "photo_entity")
+data class PhotoEntity(
     @PrimaryKey(autoGenerate = true)
     val id: Int,
     val width: Int,
@@ -16,6 +16,5 @@ data class BookmarksEntity(
     val photographer_id: Int,
     val avg_color: String,
     val liked: Boolean,
-    val alt: String,
-    val fav:Boolean
+    val alt: String
 ) : Serializable

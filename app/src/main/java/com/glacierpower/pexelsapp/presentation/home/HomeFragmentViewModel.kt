@@ -1,5 +1,6 @@
 package com.glacierpower.pexelsapp.presentation.home
 
+import android.util.Log
 import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -45,7 +46,27 @@ class HomeFragmentViewModel @Inject constructor(
 
 
     private var queryString: String? = null
-    private var pageNumber = (1..100).random()
+    var pageNumber = (1..100).random()
+
+    fun insertPhotosCuratedPhoto() {
+        viewModelScope.launch {
+            try {
+                pexelsInteractor.insertPhoto(pageNumber)
+            } catch (e: Exception) {
+                Log.w("Insert data", e.message.toString())
+            }
+        }
+    }
+
+    fun insertSearchedPhoto(query:String){
+        viewModelScope.launch {
+            try {
+                pexelsInteractor.insertSearchedPhoto(query,pageNumber)
+            }catch (e:Exception){
+                Log.w("Insert searched", e.message.toString())
+            }
+        }
+    }
 
     fun getCuratedPhoto() {
         try {

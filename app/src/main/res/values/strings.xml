@@ -21,4 +21,7 @@
     <string name="downloading_started">Downloading started</string>
     <string name="no_connection">No connection</string>
     <string name="image_not_found">Image not found</string>
+    <string name="author">Author</string>
+    <string name="photo_was_added_to_bookmarks">Photo was added to bookmarks</string>
+    <string name="you_haven_t_saved_anything_yet">You haven\'t saved anything yet</string>
 </resources>

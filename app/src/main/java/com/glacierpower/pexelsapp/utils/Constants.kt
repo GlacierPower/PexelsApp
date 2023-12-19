@@ -11,4 +11,7 @@ object Constants {
     const val ERROR = "Something went wrong! Please try again later"
     const val DELAY = 1000L
     const val INTERNET ="Internet"
+    const val PATH = "https://images.pexels.com/photos/"
+    const val PHOTO = "/pexels-photo-"
+    const val TYPE = ".jpeg?auto=compress&cs=tinysrgb&h=350\\\",\""
 }

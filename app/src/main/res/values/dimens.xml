@@ -26,4 +26,6 @@
     <dimen name="btn_download_width">200dp</dimen>
     <dimen name="detail_image_margin_top">75dp</dimen>
     <dimen name="btn_margin_details">15dp</dimen>
+    <dimen name="author_text_size">20sp</dimen>
+    <dimen name="margin_top_bookmarks">65dp</dimen>
 </resources>

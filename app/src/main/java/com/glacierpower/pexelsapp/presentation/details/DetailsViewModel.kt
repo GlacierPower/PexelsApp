@@ -1,9 +1,11 @@
 package com.glacierpower.pexelsapp.presentation.details
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.glacierpower.pexelsapp.R
 import com.glacierpower.pexelsapp.domain.PexelsInteractor
 import com.glacierpower.pexelsapp.model.PhotoListModel
 import com.glacierpower.pexelsapp.utils.Constants
@@ -29,6 +31,23 @@ class DetailsViewModel @Inject constructor(private val pexelsInteractor: PexelsI
     private var _explore = MutableLiveData<Boolean>()
     val explore: LiveData<Boolean> get() = _explore
 
+    private var _navCurated = MutableLiveData<Int?>()
+    val navCurated: LiveData<Int?> get() = _navCurated
+
+
+    fun navigateToCurated() {
+        _navCurated.value = R.id.homeFragment
+    }
+    fun favClicked(id:Int) {
+        viewModelScope.launch {
+            try {
+                pexelsInteractor.insertPhotoToBookmarksDataBase(id)
+            } catch (e: Exception) {
+                Log.w("News fav clicked", e.message.toString())
+            }
+
+        }
+    }
 
 
     fun getPhotoById(id: Int) {
