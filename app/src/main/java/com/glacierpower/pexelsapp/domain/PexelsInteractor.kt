@@ -32,9 +32,23 @@ class PexelsInteractor @Inject constructor(private val pexelsRepository: PexelsR
         return pexelsRepository.getCuratedPhoto(pageNumber)
     }
 
-    suspend fun insertPhotoToBookmarksDataBase(id: Int) {
-        val foundPhoto = pexelsRepository.findPhotoById(id)
-        return pexelsRepository.insertPhotoToBookmarksDataBase(foundPhoto)
+    suspend fun insertPhoto(page:Int){
+        pexelsRepository.insertPhotoCuratedPhoto(page)
+    }
+
+    suspend fun insertSearchedPhoto(
+        query: String,
+        pageNumber: Int
+    ){
+        pexelsRepository.insertSearchedPhoto(query,pageNumber)
+    }
+    suspend fun findPhotoById(id: Int) {
+        pexelsRepository.findPhotoById(id)
+    }
+
+    suspend fun insertPhotoToBookmarksDataBase(id:Int) {
+        val foundItem = pexelsRepository.findPhotoById(id)
+        return pexelsRepository.insertPhotoToBookmarksDataBase(foundItem)
     }
 
     suspend fun getPhotosFromBookmarksDataBase(): Flow<List<BookmarksEntity>> {

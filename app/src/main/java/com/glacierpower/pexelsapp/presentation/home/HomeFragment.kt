@@ -72,6 +72,7 @@ class HomeFragment : Fragment(),
         observeExploreLD()
         loading()
         viewModel.getFeatured()
+        viewModel.insertPhotosCuratedPhoto()
     }
 
     private fun explore() {
@@ -140,6 +141,7 @@ class HomeFragment : Fragment(),
         viewModel.search.observe(viewLifecycleOwner, Observer { response ->
             when (response) {
                 is ResultState.Success -> {
+
                     curatedPhotoAdapter.differ.submitList(response.data)
                     showHideProgressBar(false)
 
@@ -170,6 +172,7 @@ class HomeFragment : Fragment(),
                         if (newText?.length!! >= 3) {
                             viewModel.getSearchedPhoto(newText)
                             showHideProgressBar(true)
+                            viewModel.insertSearchedPhoto(newText)
                         }
                     }
                     return false
@@ -187,8 +190,14 @@ class HomeFragment : Fragment(),
         viewModel.curatedPhoto.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is ResultState.Success -> {
-                    curatedPhotoAdapter.differ.submitList(it.data)
-                    showHideProgressBar(false)
+                    if(it.data.isNullOrEmpty()){
+                        viewBinding.flipper.displayedChild = 1
+                    }else{
+                        curatedPhotoAdapter.differ.submitList(it.data)
+                        showHideProgressBar(false)
+                        viewBinding.flipper.displayedChild = 0
+                    }
+
                 }
 
                 is ResultState.Error -> {
@@ -279,13 +288,12 @@ class HomeFragment : Fragment(),
         viewModel.getFeatured()
     }
 
-    private fun loading(){
+    private fun loading() {
         viewModel.loading.observe(viewLifecycleOwner, Observer {
-            if(it){
+            if (it) {
                 viewBinding.swipeContainer.isRefreshing = it
-            }
-            else{
-                viewBinding.swipeContainer.isRefreshing !=it
+            } else {
+                viewBinding.swipeContainer.isRefreshing != it
             }
         })
     }
@@ -295,10 +303,11 @@ class HomeFragment : Fragment(),
         val str = getIntent(query).getStringExtra(query)
         viewBinding.searchView.setQuery(str, true)
         showHideProgressBar(true)
+        viewModel.insertSearchedPhoto(query)
     }
 
-    override fun getPhotoById(photoId: Int, link:String) {
-        val action = HomeFragmentDirections.actionHomeFragmentToDetailsFragment(link,photoId)
+    override fun getPhotoById(photoId: Int, link: String) {
+        val action = HomeFragmentDirections.actionHomeFragmentToDetailsFragment(link, photoId)
         findNavController().navigate(
             action
         )

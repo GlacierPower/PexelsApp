@@ -1,6 +1,7 @@
 package com.glacierpower.pexelsapp.domain
 
 import com.glacierpower.pexelsapp.data.data_base.BookmarksEntity
+import com.glacierpower.pexelsapp.data.data_base.PhotoEntity
 import com.glacierpower.pexelsapp.model.CollectionModel
 import com.glacierpower.pexelsapp.model.PhotoListModel
 import com.glacierpower.pexelsapp.utils.ResultState
@@ -18,10 +19,18 @@ interface PexelsRepository {
 
     suspend fun getPhotoById(id: Int): ResultState<PhotoListModel>
 
-    suspend fun findPhotoById(id: Int): BookmarksEntity
 
-    suspend fun insertPhotoToBookmarksDataBase(bookmarksEntity: BookmarksEntity)
+    suspend fun insertPhotoCuratedPhoto(page: Int)
 
-    suspend fun getPhotosFromBookmarksDataBase(): Flow<List<BookmarksEntity>>
+    suspend fun insertSearchedPhoto(
+        query: String,
+        pageNumber: Int
+    )
+
+    suspend fun findPhotoById(id: Int): PhotoEntity
+
+    suspend fun insertPhotoToBookmarksDataBase(photoEntity: PhotoEntity)
+
+    suspend fun getPhotosFromBookmarksDataBase():Flow<List<BookmarksEntity>>
 
 }

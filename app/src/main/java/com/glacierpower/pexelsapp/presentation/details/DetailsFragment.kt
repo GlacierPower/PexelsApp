@@ -11,14 +11,15 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.bumptech.glide.Glide
 import com.glacierpower.pexelsapp.R
 import com.glacierpower.pexelsapp.databinding.FragmentDetailsBinding
 import com.glacierpower.pexelsapp.presentation.MainActivity
 import com.glacierpower.pexelsapp.utils.Constants
 import com.glacierpower.pexelsapp.utils.ImageDownloader
+import com.glacierpower.pexelsapp.utils.NavHelper.navigate
 import com.glacierpower.pexelsapp.utils.ResultState
 import com.glacierpower.pexelsapp.utils.showHide
 import com.glacierpower.pexelsapp.utils.toast
@@ -28,7 +29,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
-class DetailsFragment : Fragment() {
+class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener {
 
     private val viewModel: DetailsViewModel by viewModels()
 
@@ -57,19 +58,37 @@ class DetailsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel.getPhotoById(args.photoId)
         getPhotoById()
+
+        viewBinding.btnBookmark.setOnClickListener {
+            viewModel.favClicked(args.photoId)
+            toast(requireContext(), getString(R.string.photo_was_added_to_bookmarks))
+        }
         viewBinding.btnDownload.setOnClickListener {
             downloadImage(requireContext(), args.photoLink)
             toast(requireContext(), getString(R.string.downloading_started))
         }
 
-        viewBinding.btnTryAgain.setOnClickListener {
-            findNavController().navigate(R.id.homeFragment)
-        }
         connection()
         observeExploreLD()
         explore()
+        observeNavigate()
+        navigateToHome()
 
+    }
 
+    private fun navigateToHome() {
+        viewBinding.btnExplore.setOnClickListener {
+            viewModel.navigateToCurated()
+        }
+
+    }
+
+    private fun observeNavigate() {
+        viewModel.navCurated.observe(viewLifecycleOwner, Observer {
+            if (it != null) {
+                navigate(it)
+            }
+        })
     }
 
     private fun observeExploreLD() {
@@ -95,20 +114,17 @@ class DetailsFragment : Fragment() {
                         photo.data.photographer
                     viewBinding.progressBar.visibility = View.GONE
                     viewBinding.btnDownload.visibility = View.VISIBLE
-                    viewBinding.btnBookmark.visibility =View.VISIBLE
-
+                    viewBinding.btnBookmark.visibility = View.VISIBLE
                 }
 
                 is ResultState.Error -> {
                     toast(requireContext(), Constants.ERROR)
-
                 }
 
                 is ResultState.Loading -> {
-                    viewBinding.swipeContainer.isRefreshing = true
                     viewBinding.progressBar.visibility = View.VISIBLE
                     viewBinding.btnDownload.visibility = View.GONE
-                    viewBinding.btnBookmark.visibility =View.GONE
+                    viewBinding.btnBookmark.visibility = View.GONE
                 }
             }
         })
@@ -125,7 +141,6 @@ class DetailsFragment : Fragment() {
 
     private fun explore() {
         viewBinding.btnExplore.setOnClickListener {
-
             viewBinding.noResultLayout.visibility = View.GONE
 
 
@@ -147,11 +162,12 @@ class DetailsFragment : Fragment() {
         })
     }
 
-    private fun showHideProgressBar(isVisible: Boolean) {
-        viewBinding.swipeContainer.isRefreshing = isVisible
+    override fun onRefresh() {
+        getPhotoById()
     }
-}
 
+
+}
 
 
 
