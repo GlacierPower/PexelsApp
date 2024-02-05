@@ -6,12 +6,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.glacierpower.pexelsapp.R
-import com.glacierpower.pexelsapp.domain.PexelsInteractor
+import com.glacierpower.pexelsapp.domain.pexels.PexelsInteractor
 import com.glacierpower.pexelsapp.model.PhotoListModel
 import com.glacierpower.pexelsapp.utils.Constants
 import com.glacierpower.pexelsapp.utils.InternetConnection
 import com.glacierpower.pexelsapp.utils.ResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -34,11 +35,16 @@ class DetailsViewModel @Inject constructor(private val pexelsInteractor: PexelsI
     private var _navCurated = MutableLiveData<Int?>()
     val navCurated: LiveData<Int?> get() = _navCurated
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        _details.postValue(ResultState.Error("$throwable"))
+    }
+
 
     fun navigateToCurated() {
         _navCurated.value = R.id.homeFragment
     }
-    fun favClicked(id:Int) {
+
+    fun favClicked(id: Int) {
         viewModelScope.launch {
             try {
                 pexelsInteractor.insertPhotoToBookmarksDataBase(id)
@@ -53,7 +59,7 @@ class DetailsViewModel @Inject constructor(private val pexelsInteractor: PexelsI
     fun getPhotoById(id: Int) {
         _details.value = (ResultState.Loading())
         try {
-            viewModelScope.launch {
+            viewModelScope.launch(exceptionHandler) {
                 if (internetConnection.isOnline()) {
                     when (val response = pexelsInteractor.getPhotoById(id)) {
                         is ResultState.Success -> {

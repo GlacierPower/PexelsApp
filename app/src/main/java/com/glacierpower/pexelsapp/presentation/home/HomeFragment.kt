@@ -5,16 +5,20 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.glacierpower.pexelsapp.R
+import com.glacierpower.pexelsapp.data.sharedpreferences.UiMode
 import com.glacierpower.pexelsapp.databinding.FragmentHomeBinding
 import com.glacierpower.pexelsapp.presentation.adapter.CuratedPhotoAdapter
 import com.glacierpower.pexelsapp.presentation.adapter.FeaturedAdapter
@@ -59,8 +63,11 @@ class HomeFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initView()
+        viewModel.theme.asLiveData().observe(viewLifecycleOwner) { uiMode ->
+            setCheckedMode(uiMode)
+        }
         setupRecyclerView()
-
         initScrollListeners()
         getPhotos()
         getFeatured()
@@ -307,11 +314,41 @@ class HomeFragment : Fragment(),
         viewModel.insertSearchedPhoto(query)
     }
 
+
+
     override fun getPhotoById(photoId: Int, link: String) {
         val action = HomeFragmentDirections.actionHomeFragmentToDetailsFragment(link, photoId)
         findNavController().navigate(
             action
         )
+    }
+
+    private fun setCheckedMode(uiMode: UiMode?) {
+        when (uiMode) {
+            UiMode.LIGHT -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                viewBinding.darkMode.isChecked = false
+            }
+
+            UiMode.DARK -> {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(),R.color.black )
+                viewBinding.darkMode.isChecked = true
+            }
+
+            else -> {}
+        }
+    }
+
+    private fun initView() {
+        viewBinding.darkMode.setOnCheckedChangeListener { _, isChecked ->
+            lifecycleScope.launch {
+                when (isChecked) {
+                    true -> viewModel.setMode(UiMode.DARK)
+                    false -> viewModel.setMode(UiMode.LIGHT)
+                }
+            }
+        }
     }
 
 

@@ -24,4 +24,10 @@
     <string name="author">Author</string>
     <string name="photo_was_added_to_bookmarks">Photo was added to bookmarks</string>
     <string name="you_haven_t_saved_anything_yet">You haven\'t saved anything yet</string>
+    <string name="delete_photo">Delete photo</string>
+    <string name="are_you_sure">Are you sure, that you want to delete this photo?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="photo_was_deleted_from_favorite">Photo was deleted from Bookmarks</string>
+    <string name="dark_mode">Dark mode</string>
 </resources>

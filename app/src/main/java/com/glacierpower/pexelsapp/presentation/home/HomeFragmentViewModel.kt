@@ -6,7 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.glacierpower.pexelsapp.domain.PexelsInteractor
+import com.glacierpower.pexelsapp.data.sharedpreferences.UiMode
+import com.glacierpower.pexelsapp.domain.pexels.PexelsInteractor
+import com.glacierpower.pexelsapp.domain.setting.SettingInteractor
 import com.glacierpower.pexelsapp.model.CollectionModel
 import com.glacierpower.pexelsapp.model.PhotoListModel
 import com.glacierpower.pexelsapp.utils.Constants
@@ -20,6 +22,7 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeFragmentViewModel @Inject constructor(
     private val pexelsInteractor: PexelsInteractor,
+    private val settingInteractor: SettingInteractor
 ) :
     ViewModel() {
 
@@ -44,9 +47,11 @@ class HomeFragmentViewModel @Inject constructor(
     private var _loading = MutableLiveData<Boolean>()
     val loading: LiveData<Boolean> get() = _loading
 
+    val theme = settingInteractor.uIModeFlow()
 
     private var queryString: String? = null
-    var pageNumber = (1..100).random()
+    private var pageNumber = (1..100).random()
+
 
     fun insertPhotosCuratedPhoto() {
         viewModelScope.launch {
@@ -58,11 +63,11 @@ class HomeFragmentViewModel @Inject constructor(
         }
     }
 
-    fun insertSearchedPhoto(query:String){
+    fun insertSearchedPhoto(query: String) {
         viewModelScope.launch {
             try {
-                pexelsInteractor.insertSearchedPhoto(query,pageNumber)
-            }catch (e:Exception){
+                pexelsInteractor.insertSearchedPhoto(query, pageNumber)
+            } catch (e: Exception) {
                 Log.w("Insert searched", e.message.toString())
             }
         }
@@ -192,6 +197,16 @@ class HomeFragmentViewModel @Inject constructor(
         } else {
             View.VISIBLE
         }
+    }
+
+    fun setMode(uiMode: UiMode) {
+        try {
+            viewModelScope.launch { settingInteractor.setDarkMode(uiMode) }
+        } catch (e: Exception) {
+            Log.w("Theme", "Fail")
+        }
+
+
     }
 
 

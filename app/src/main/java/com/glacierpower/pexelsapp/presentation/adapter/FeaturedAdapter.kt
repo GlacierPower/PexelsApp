@@ -14,7 +14,8 @@ import com.glacierpower.pexelsapp.presentation.adapter.listener.FeaturedListener
 class FeaturedAdapter(private val featuredListener: FeaturedListener) :
     RecyclerView.Adapter<FeaturedAdapter.FeaturedViewHolder>() {
 
-    private var selectedItemPosition = 0
+    private var selectedItem = -1
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -28,18 +29,16 @@ class FeaturedAdapter(private val featuredListener: FeaturedListener) :
 
     override fun onBindViewHolder(holder: FeaturedAdapter.FeaturedViewHolder, position: Int) {
         val featured = differ.currentList[position]
+
+        holder.card.isActivated = position == selectedItem
+
         holder.bind(featured)
-        holder.itemView.setOnClickListener {
-            selectedItemPosition = position
-            notifyItemChanged(position)
 
-        }
-        if(selectedItemPosition == position){
-            holder.card.setBackgroundColor(Color.parseColor("#BB1020"))
-        }
-        else{
-            holder.card.setBackgroundColor(Color.parseColor("#ffffff"))
 
+        holder.card.setOnClickListener {
+            notifyItemChanged(selectedItem)
+            selectedItem = position
+            notifyItemChanged(selectedItem)
         }
     }
 
@@ -69,7 +68,7 @@ class FeaturedAdapter(private val featuredListener: FeaturedListener) :
 
     inner class FeaturedViewHolder(private val searchItemBinding: SearchItemBinding) :
         RecyclerView.ViewHolder(searchItemBinding.root) {
-            val card = searchItemBinding.cardView
+        val card = searchItemBinding.layout
         fun bind(featured: CollectionModel) {
             searchItemBinding.apply {
                 searchItemBinding.categoryName.text = featured.title
@@ -79,5 +78,7 @@ class FeaturedAdapter(private val featuredListener: FeaturedListener) :
 
             }
         }
+
     }
+
 }

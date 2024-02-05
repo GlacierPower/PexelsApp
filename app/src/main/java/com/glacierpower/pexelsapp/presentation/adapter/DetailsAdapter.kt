@@ -17,6 +17,7 @@ class DetailsAdapter(private val detailsListener: DetailsListener) :
     inner class DetailsViewHolder(private val detailsItemBinding: DetailsItemBinding) :
         RecyclerView.ViewHolder(detailsItemBinding.root) {
         fun bind(photoListModel: PhotoListModel) {
+
             detailsItemBinding.apply {
                 Glide.with(itemView)
                     .load(photoListModel.src.original)
@@ -29,10 +30,10 @@ class DetailsAdapter(private val detailsListener: DetailsListener) :
             }
             detailsItemBinding.btnBookmark.setOnClickListener {
                 detailsListener.addToBookmarks(photoListModel.id)
+
             }
-
-
         }
+
     }
 
     override fun onCreateViewHolder(

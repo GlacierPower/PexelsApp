@@ -42,8 +42,16 @@
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 tools:listitem="@layout/search_item" />
+
         </LinearLayout>
 
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/darkMode"
+            android:layout_width="wrap_content"
+            android:layout_marginEnd="@dimen/padding_home_fragment"
+            android:layout_gravity="end"
+            android:text="@string/dark_mode"
+            android:layout_height="@dimen/dark_mode_switch"/>
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/swipeContainer"
             android:layout_width="match_parent"
@@ -80,14 +88,14 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="@dimen/marin_no_result"
-            android:paddingTop="@dimen/no_result_padding_top"
+            android:paddingTop="@dimen/padding_explore_home"
             android:text="@string/no_result_found"
             android:textSize="@dimen/no_result_text_size"
             app:layout_constraintBottom_toTopOf="@+id/btn_explore"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-        <com.google.android.material.button.MaterialButton
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/btn_explore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -95,7 +103,7 @@
             android:backgroundTint="@color/white"
             android:paddingTop="@dimen/explore_padding_top"
             android:text="@string/explore"
-            android:textColor="@color/explore_color"
+            android:textColor="@color/splash_color"
             android:textSize="@dimen/explore_text_size"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"

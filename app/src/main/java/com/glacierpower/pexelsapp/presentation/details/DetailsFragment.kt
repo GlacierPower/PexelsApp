@@ -4,9 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -20,6 +17,7 @@ import com.glacierpower.pexelsapp.utils.Constants
 import com.glacierpower.pexelsapp.utils.ImageDownloader
 import com.glacierpower.pexelsapp.utils.NavHelper.navigate
 import com.glacierpower.pexelsapp.utils.ResultState
+import com.glacierpower.pexelsapp.utils.checkMode
 import com.glacierpower.pexelsapp.utils.showHide
 import com.glacierpower.pexelsapp.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,8 +39,8 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Detail
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val color = ContextCompat.getColor(requireContext(), R.color.white)
-        (activity as AppCompatActivity).supportActionBar?.setBackgroundDrawable(color.toDrawable())
+        checkMode()
+
     }
 
     override fun onCreateView(
@@ -154,7 +152,7 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Detail
         getPhotoById()
     }
 
-    override fun downloadPhoto(link:String) {
+    override fun downloadPhoto(link: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val downloader = ImageDownloader(requireContext())
             downloader.downloadImage(link)
@@ -166,7 +164,6 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Detail
         viewModel.favClicked(id)
         toast(requireContext(), getString(R.string.photo_was_added_to_bookmarks))
     }
-
 
 }
 
