@@ -5,16 +5,18 @@ import android.view.View
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
 import com.glacierpower.pexelsapp.data.sharedpreferences.UiMode
 import com.glacierpower.pexelsapp.domain.pexels.PexelsInteractor
 import com.glacierpower.pexelsapp.domain.setting.SettingInteractor
 import com.glacierpower.pexelsapp.model.CollectionModel
 import com.glacierpower.pexelsapp.model.PhotoListModel
+import com.glacierpower.pexelsapp.utils.ConnectivityManagerRepository
 import com.glacierpower.pexelsapp.utils.Constants
-import com.glacierpower.pexelsapp.utils.InternetConnection
 import com.glacierpower.pexelsapp.utils.ResultState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.launch
 import java.io.IOException
 import javax.inject.Inject
@@ -22,15 +24,12 @@ import javax.inject.Inject
 @HiltViewModel
 class HomeFragmentViewModel @Inject constructor(
     private val pexelsInteractor: PexelsInteractor,
-    private val settingInteractor: SettingInteractor
+    private val settingInteractor: SettingInteractor,
+    connectivityManagerRepository: ConnectivityManagerRepository
 ) :
     ViewModel() {
 
-    @Inject
-    lateinit var internetConnection: InternetConnection
-
-    private var _connection = MutableLiveData<Boolean>()
-    val connection: LiveData<Boolean> get() = _connection
+    val isOnline = connectivityManagerRepository.isConnected.asLiveData()
 
     private var _featuredCollections = MutableLiveData<ResultState<List<CollectionModel>>>()
     val featureCollections: LiveData<ResultState<List<CollectionModel>>> get() = _featuredCollections
@@ -52,9 +51,13 @@ class HomeFragmentViewModel @Inject constructor(
     private var queryString: String? = null
     private var pageNumber = (1..100).random()
 
+    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        _curatedPhoto.postValue(ResultState.Error("$throwable"))
+    }
+
 
     fun insertPhotosCuratedPhoto() {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             try {
                 pexelsInteractor.insertPhoto(pageNumber)
             } catch (e: Exception) {
@@ -64,7 +67,7 @@ class HomeFragmentViewModel @Inject constructor(
     }
 
     fun insertSearchedPhoto(query: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             try {
                 pexelsInteractor.insertSearchedPhoto(query, pageNumber)
             } catch (e: Exception) {
@@ -75,30 +78,25 @@ class HomeFragmentViewModel @Inject constructor(
 
     fun getCuratedPhoto() {
         try {
-            viewModelScope.launch {
-                if (internetConnection.isOnline()) {
-                    when (val response = pexelsInteractor.getCuratedPhoto(pageNumber)) {
-                        is ResultState.Success -> {
-                            _curatedPhoto.postValue(ResultState.Success(response.data))
-                            _connection.value = false
-                            _loading.value = false
-                        }
+            viewModelScope.launch(exceptionHandler) {
+                when (val response = pexelsInteractor.getCuratedPhoto(pageNumber)) {
+                    is ResultState.Success -> {
+                        _curatedPhoto.postValue(ResultState.Success(response.data))
 
-                        is ResultState.Loading -> {
-                            _loading.value = true
-                        }
-
-                        is ResultState.Error -> {
-                            _curatedPhoto.postValue(ResultState.Error(Constants.ERROR))
-                            _loading.value = false
-                        }
-
+                        _loading.value = false
                     }
 
-                } else {
-                    _connection.value = true
-                    _curatedPhoto.postValue(ResultState.Error(Constants.NO_CONNECTION))
+                    is ResultState.Loading -> {
+                        _loading.value = true
+                    }
+
+                    is ResultState.Error -> {
+                        _curatedPhoto.postValue(ResultState.Error(Constants.ERROR))
+                        _loading.value = false
+                    }
+
                 }
+
             }
         } catch (exception: Exception) {
             when (exception) {
@@ -111,30 +109,25 @@ class HomeFragmentViewModel @Inject constructor(
 
 
     fun getFeatured() {
-        viewModelScope.launch {
+        viewModelScope.launch(exceptionHandler) {
             try {
-                if (internetConnection.isOnline()) {
-                    when (val response = pexelsInteractor.getFeaturedCollections(pageNumber, 7)) {
-                        is ResultState.Success -> {
-                            _featuredCollections.postValue(ResultState.Success(response.data))
-                            _connection.value = false
-                            _loading.value = false
-                        }
-
-                        is ResultState.Error -> {
-                            _curatedPhoto.postValue(ResultState.Error(Constants.ERROR))
-                            _loading.value = false
-                        }
-
-                        is ResultState.Loading -> {
-                            _loading.value = true
-                        }
+                when (val response = pexelsInteractor.getFeaturedCollections(pageNumber, 7)) {
+                    is ResultState.Success -> {
+                        _featuredCollections.postValue(ResultState.Success(response.data))
+                        _loading.value = false
                     }
 
-                } else {
-                    _connection.value = true
-                    _featuredCollections.postValue(ResultState.Error(Constants.NO_CONNECTION))
+                    is ResultState.Error -> {
+                        _curatedPhoto.postValue(ResultState.Error(Constants.ERROR))
+                        _loading.value = false
+                    }
+
+                    is ResultState.Loading -> {
+                        _loading.value = true
+                    }
                 }
+
+
             } catch (exception: Exception) {
                 when (exception) {
                     is IOException -> _featuredCollections.postValue(ResultState.Error(exception.message!!))
@@ -147,33 +140,28 @@ class HomeFragmentViewModel @Inject constructor(
 
     fun getSearchedPhoto(query: String) {
         try {
-            viewModelScope.launch {
-                if (internetConnection.isOnline()) {
-                    when (val response = pexelsInteractor.getSearchedPhoto(query, pageNumber)) {
-                        is ResultState.Success -> {
-                            if (response.data.isNullOrEmpty()) {
-                                _explore.value = true
-                            } else {
-                                _search.postValue(ResultState.Success(response.data))
-                                _connection.value = false
-                                _explore.value = false
-                                _loading.value = false
-                            }
+            viewModelScope.launch(exceptionHandler) {
+                when (val response = pexelsInteractor.getSearchedPhoto(query, pageNumber)) {
+                    is ResultState.Success -> {
+                        if (response.data.isNullOrEmpty()) {
+                            _explore.value = true
+                        } else {
+                            _search.postValue(ResultState.Success(response.data))
 
-                        }
-
-                        is ResultState.Error -> {
+                            _explore.value = false
                             _loading.value = false
-                            _search.postValue(ResultState.Error(Constants.ERROR))
                         }
 
-                        is ResultState.Loading -> {
-                            _loading.value = true
-                        }
                     }
-                } else {
-                    _connection.value = true
-                    _search.postValue(ResultState.Error(Constants.NO_CONNECTION))
+
+                    is ResultState.Error -> {
+                        _loading.value = false
+                        _search.postValue(ResultState.Error(Constants.ERROR))
+                    }
+
+                    is ResultState.Loading -> {
+                        _loading.value = true
+                    }
                 }
             }
         } catch (exception: Exception) {

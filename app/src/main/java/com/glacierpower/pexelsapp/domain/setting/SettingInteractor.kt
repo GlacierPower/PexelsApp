@@ -12,4 +12,5 @@ class SettingInteractor @Inject constructor(private val settingRepository: Setti
     fun uIModeFlow(): Flow<UiMode> {
         return settingRepository.uIModeFlow()
     }
+
 }

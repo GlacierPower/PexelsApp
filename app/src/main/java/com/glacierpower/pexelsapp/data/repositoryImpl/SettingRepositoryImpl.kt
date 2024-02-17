@@ -20,4 +20,6 @@ class SettingRepositoryImpl @Inject constructor(
     override fun uIModeFlow(): Flow<UiMode> {
         return settingDataStore.uiModeFlow
     }
+
+
 }

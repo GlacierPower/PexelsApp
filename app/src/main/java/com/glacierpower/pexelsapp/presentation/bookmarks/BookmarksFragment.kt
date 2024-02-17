@@ -86,12 +86,14 @@ class BookmarksFragment : Fragment(), BookmarksListener {
                     } else {
                         viewBinding.flipper.displayedChild = 0
                         bookmarksAdapter.differ.submitList(it)
+                        showHideProgressBar(false)
                     }
 
                 }
             }
         }
     }
+
 
     private fun initScrollListeners() {
 
@@ -141,6 +143,10 @@ class BookmarksFragment : Fragment(), BookmarksListener {
         deletePhotoAlert(id)
     }
 
+    private fun showHideProgressBar(isVisible: Boolean) {
+        viewBinding.swipeContainer.isRefreshing = isVisible
+    }
+
     private fun deletePhotoAlert(id: Int) {
         MaterialAlertDialogBuilder(requireContext())
             .setIcon(R.drawable.remove)
@@ -154,5 +160,6 @@ class BookmarksFragment : Fragment(), BookmarksListener {
             }
             .show()
     }
+
 
 }

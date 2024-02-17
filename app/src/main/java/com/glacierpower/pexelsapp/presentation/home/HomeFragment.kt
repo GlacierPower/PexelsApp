@@ -29,6 +29,7 @@ import com.glacierpower.pexelsapp.presentation.utils.Scroller
 import com.glacierpower.pexelsapp.utils.Constants.DELAY
 import com.glacierpower.pexelsapp.utils.Constants.ERROR
 import com.glacierpower.pexelsapp.utils.ResultState
+import com.glacierpower.pexelsapp.utils.showAlert
 import com.glacierpower.pexelsapp.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.Job
@@ -63,23 +64,27 @@ class HomeFragment : Fragment(),
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
+
         initView()
-        viewModel.theme.asLiveData().observe(viewLifecycleOwner) { uiMode ->
-            setCheckedMode(uiMode)
-        }
+        setTheme()
         setupRecyclerView()
         initScrollListeners()
         getPhotos()
         getFeatured()
         explore()
-        tryAgain()
         searchPhoto()
         getCurated()
         connection()
         observeExploreLD()
         loading()
-        viewModel.getFeatured()
         viewModel.insertPhotosCuratedPhoto()
+    }
+
+    private fun setTheme() {
+        viewModel.theme.asLiveData().observe(viewLifecycleOwner) { uiMode ->
+            setCheckedMode(uiMode)
+        }
     }
 
     private fun explore() {
@@ -95,22 +100,6 @@ class HomeFragment : Fragment(),
         }
     }
 
-    private fun tryAgain() {
-        viewBinding.btnTryAgain.setOnClickListener {
-            viewModel.connection.observe(viewLifecycleOwner, Observer {
-                it.let {
-                    if (it) {
-                        viewBinding.tryAgainLayout.visibility = View.VISIBLE
-                        viewBinding.photoLayout.visibility = View.GONE
-                    } else {
-                        getCurated()
-                        viewBinding.tryAgainLayout.visibility = View.GONE
-                    }
-                }
-            })
-
-        }
-    }
 
     private fun initScrollListeners() {
 
@@ -148,7 +137,6 @@ class HomeFragment : Fragment(),
         viewModel.search.observe(viewLifecycleOwner, Observer { response ->
             when (response) {
                 is ResultState.Success -> {
-
                     curatedPhotoAdapter.differ.submitList(response.data)
                     showHideProgressBar(false)
 
@@ -168,8 +156,9 @@ class HomeFragment : Fragment(),
         })
 
         viewBinding.searchView.setOnQueryTextListener(
-            object : SearchView.OnQueryTextListener {
+            object : SearchView.OnQueryTextListener, android.widget.SearchView.OnQueryTextListener {
                 override fun onQueryTextSubmit(query: String?): Boolean {
+
                     return false
                 }
 
@@ -191,7 +180,9 @@ class HomeFragment : Fragment(),
 
         )
 
+
     }
+
 
     private fun getCurated() {
 
@@ -223,7 +214,7 @@ class HomeFragment : Fragment(),
     }
 
     private fun getFeatured() {
-
+        viewModel.getFeatured()
         viewModel.featureCollections.observe(viewLifecycleOwner, Observer {
             when (it) {
                 is ResultState.Success -> {
@@ -271,18 +262,18 @@ class HomeFragment : Fragment(),
     }
 
     private fun connection() {
-        viewModel.connection.observe(viewLifecycleOwner, Observer {
-            it.let {
-                if (it) {
-                    viewModel.showHide(viewBinding.tryAgainLayout)
-                    viewModel.showHide(viewBinding.photoLayout)
-                    toast(requireContext(), getString(R.string.no_connection))
-                } else {
-                    getCurated()
-                    viewBinding.tryAgainLayout.visibility = View.GONE
-                }
+        viewModel.isOnline.observe(viewLifecycleOwner) { isOnline ->
+            if (isOnline) {
+                viewBinding.tryAgainLayout.visibility = View.GONE
+                viewBinding.photoLayout.visibility = View.VISIBLE
+                getCurated()
+            } else {
+                viewModel.showHide(viewBinding.tryAgainLayout)
+                viewModel.showHide(viewBinding.photoLayout)
+                toast(requireContext(), getString(R.string.no_connection))
+                showAlert()
             }
-        })
+        }
     }
 
     private fun showHideProgressBar(isVisible: Boolean) {
@@ -315,7 +306,6 @@ class HomeFragment : Fragment(),
     }
 
 
-
     override fun getPhotoById(photoId: Int, link: String) {
         val action = HomeFragmentDirections.actionHomeFragmentToDetailsFragment(link, photoId)
         findNavController().navigate(
@@ -332,7 +322,8 @@ class HomeFragment : Fragment(),
 
             UiMode.DARK -> {
                 AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(),R.color.black )
+                requireActivity().window.statusBarColor =
+                    ContextCompat.getColor(requireContext(), R.color.black)
                 viewBinding.darkMode.isChecked = true
             }
 

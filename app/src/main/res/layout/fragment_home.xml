@@ -28,7 +28,6 @@
             android:focusable="false"
             app:queryHint="@string/search" />
 
-
         <LinearLayout
             android:id="@+id/searchLayout"
             android:layout_width="wrap_content"
@@ -155,20 +154,15 @@
             android:layout_marginTop="@dimen/margin_top_no_connection"
             android:src="@drawable/no_connection" />
 
-        <com.google.android.material.button.MaterialButton
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/btn_try_again"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:backgroundTint="@color/white"
             android:paddingTop="@dimen/explore_padding_top"
             android:text="@string/try_again"
-            android:textColor="@color/explore_color"
             android:textSize="@dimen/explore_text_size" />
 
     </LinearLayout>
-
-
-
 
 </ViewFlipper>

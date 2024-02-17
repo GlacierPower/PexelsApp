@@ -15,8 +15,10 @@ import javax.inject.Inject
 @HiltViewModel
 class BookmarksViewModel @Inject constructor(private val pexelsInteractor: PexelsInteractor) :
     ViewModel() {
+
     val photo = flow {
         emit(pexelsInteractor.getPhotosFromBookmarksDataBase())
+
     }
     private var _toast = MutableLiveData<Int>()
     val toast: LiveData<Int> get() = _toast

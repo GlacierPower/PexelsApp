@@ -7,4 +7,6 @@ interface SettingRepository {
     suspend fun setDarkMode(uiMode: UiMode)
 
     fun uIModeFlow(): Flow<UiMode>
+
+
 }

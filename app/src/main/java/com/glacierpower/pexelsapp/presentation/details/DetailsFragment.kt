@@ -18,6 +18,7 @@ import com.glacierpower.pexelsapp.utils.ImageDownloader
 import com.glacierpower.pexelsapp.utils.NavHelper.navigate
 import com.glacierpower.pexelsapp.utils.ResultState
 import com.glacierpower.pexelsapp.utils.checkMode
+import com.glacierpower.pexelsapp.utils.showAlert
 import com.glacierpower.pexelsapp.utils.showHide
 import com.glacierpower.pexelsapp.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
@@ -56,7 +57,7 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Detail
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getPhotoById(args.photoId)
+
         getPhotoById()
         connection()
         observeExploreLD()
@@ -93,7 +94,7 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Detail
 
 
     private fun getPhotoById() {
-
+        viewModel.getPhotoById(args.photoId)
         viewModel.details.observe(viewLifecycleOwner, Observer { photo ->
             when (photo) {
                 is ResultState.Success -> {
@@ -135,17 +136,19 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Detail
 
 
     private fun connection() {
-        viewModel.connection.observe(viewLifecycleOwner, Observer {
-            it.let {
-                if (it) {
-                    showHide(viewBinding.tryAgainLayout)
+        viewModel.isOnline.observe(viewLifecycleOwner) { isOnline ->
+            if (isOnline) {
+                viewBinding.tryAgainLayout.visibility = View.GONE
+                viewBinding.rvDetails.visibility = View.VISIBLE
+                getPhotoById()
+            } else {
+                viewBinding.tryAgainLayout.visibility = View.VISIBLE
+                viewBinding.rvDetails.visibility = View.GONE
+                toast(requireContext(), getString(R.string.no_connection))
+                showAlert()
 
-                } else {
-                    getPhotoById()
-                    viewBinding.tryAgainLayout.visibility = View.GONE
-                }
             }
-        })
+        }
     }
 
     override fun onRefresh() {
