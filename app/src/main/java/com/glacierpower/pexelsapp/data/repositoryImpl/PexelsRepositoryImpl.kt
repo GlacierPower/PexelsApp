@@ -5,7 +5,7 @@ import com.glacierpower.pexelsapp.data.data_base.BookmarksEntity
 import com.glacierpower.pexelsapp.data.data_base.PhotoEntity
 import com.glacierpower.pexelsapp.data.mappers.toModel
 import com.glacierpower.pexelsapp.data.service.PexelsApiService
-import com.glacierpower.pexelsapp.domain.PexelsRepository
+import com.glacierpower.pexelsapp.domain.pexels.PexelsRepository
 import com.glacierpower.pexelsapp.model.CollectionModel
 import com.glacierpower.pexelsapp.model.PhotoListModel
 import com.glacierpower.pexelsapp.utils.Constants.ITEM_NUMBER
@@ -17,7 +17,7 @@ import javax.inject.Inject
 
 class PexelsRepositoryImpl @Inject constructor(
     private val pexelsApiService: PexelsApiService,
-    private val bookmarksDao: BookmarksDao
+    private val bookmarksDao: BookmarksDao,
 ) : PexelsRepository {
     override suspend fun insertPhotoCuratedPhoto(page: Int) {
         val response = pexelsApiService.getCuratedPhoto(ITEM_NUMBER, page)
@@ -139,5 +139,14 @@ class PexelsRepositoryImpl @Inject constructor(
         }
 
     }
+
+    override suspend fun deleteFromBookmarks(id: Int) {
+        return withContext(Dispatchers.IO) {
+            bookmarksDao.deleteFromBookmarksEntity(id)
+        }
+
+    }
+
+
 
 }

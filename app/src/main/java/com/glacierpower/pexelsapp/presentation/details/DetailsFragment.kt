@@ -4,9 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -20,6 +17,8 @@ import com.glacierpower.pexelsapp.utils.Constants
 import com.glacierpower.pexelsapp.utils.ImageDownloader
 import com.glacierpower.pexelsapp.utils.NavHelper.navigate
 import com.glacierpower.pexelsapp.utils.ResultState
+import com.glacierpower.pexelsapp.utils.checkMode
+import com.glacierpower.pexelsapp.utils.showAlert
 import com.glacierpower.pexelsapp.utils.showHide
 import com.glacierpower.pexelsapp.utils.toast
 import dagger.hilt.android.AndroidEntryPoint
@@ -41,8 +40,8 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Detail
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val color = ContextCompat.getColor(requireContext(), R.color.white)
-        (activity as AppCompatActivity).supportActionBar?.setBackgroundDrawable(color.toDrawable())
+        checkMode()
+
     }
 
     override fun onCreateView(
@@ -58,7 +57,7 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Detail
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getPhotoById(args.photoId)
+
         getPhotoById()
         connection()
         observeExploreLD()
@@ -95,7 +94,7 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Detail
 
 
     private fun getPhotoById() {
-
+        viewModel.getPhotoById(args.photoId)
         viewModel.details.observe(viewLifecycleOwner, Observer { photo ->
             when (photo) {
                 is ResultState.Success -> {
@@ -137,24 +136,26 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Detail
 
 
     private fun connection() {
-        viewModel.connection.observe(viewLifecycleOwner, Observer {
-            it.let {
-                if (it) {
-                    showHide(viewBinding.tryAgainLayout)
+        viewModel.isOnline.observe(viewLifecycleOwner) { isOnline ->
+            if (isOnline) {
+                viewBinding.tryAgainLayout.visibility = View.GONE
+                viewBinding.rvDetails.visibility = View.VISIBLE
+                getPhotoById()
+            } else {
+                viewBinding.tryAgainLayout.visibility = View.VISIBLE
+                viewBinding.rvDetails.visibility = View.GONE
+                toast(requireContext(), getString(R.string.no_connection))
+                showAlert()
 
-                } else {
-                    getPhotoById()
-                    viewBinding.tryAgainLayout.visibility = View.GONE
-                }
             }
-        })
+        }
     }
 
     override fun onRefresh() {
         getPhotoById()
     }
 
-    override fun downloadPhoto(link:String) {
+    override fun downloadPhoto(link: String) {
         CoroutineScope(Dispatchers.IO).launch {
             val downloader = ImageDownloader(requireContext())
             downloader.downloadImage(link)
@@ -166,7 +167,6 @@ class DetailsFragment : Fragment(), SwipeRefreshLayout.OnRefreshListener, Detail
         viewModel.favClicked(id)
         toast(requireContext(), getString(R.string.photo_was_added_to_bookmarks))
     }
-
 
 }
 

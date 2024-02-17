@@ -4,9 +4,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.graphics.drawable.toDrawable
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -21,7 +18,9 @@ import com.glacierpower.pexelsapp.presentation.adapter.listener.BookmarksListene
 import com.glacierpower.pexelsapp.presentation.utils.ScrollListener
 import com.glacierpower.pexelsapp.presentation.utils.Scroller
 import com.glacierpower.pexelsapp.utils.NavHelper.navigate
+import com.glacierpower.pexelsapp.utils.checkMode
 import com.glacierpower.pexelsapp.utils.toast
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.launch
@@ -37,8 +36,7 @@ class BookmarksFragment : Fragment(), BookmarksListener {
     private lateinit var bookmarksAdapter: BookmarksAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        val color = ContextCompat.getColor(requireContext(), R.color.white)
-        (activity as AppCompatActivity).supportActionBar?.setBackgroundDrawable(color.toDrawable())
+        checkMode()
         super.onCreate(savedInstanceState)
     }
 
@@ -68,7 +66,7 @@ class BookmarksFragment : Fragment(), BookmarksListener {
         }
     }
 
-    private fun observeNavigate(){
+    private fun observeNavigate() {
         viewModel.navCurated.observe(viewLifecycleOwner, Observer {
             if (it != null) {
                 navigate(it)
@@ -88,12 +86,14 @@ class BookmarksFragment : Fragment(), BookmarksListener {
                     } else {
                         viewBinding.flipper.displayedChild = 0
                         bookmarksAdapter.differ.submitList(it)
+                        showHideProgressBar(false)
                     }
 
                 }
             }
         }
     }
+
 
     private fun initScrollListeners() {
 
@@ -138,5 +138,28 @@ class BookmarksFragment : Fragment(), BookmarksListener {
             action
         )
     }
+
+    override fun deleteFormBookmarks(id: Int) {
+        deletePhotoAlert(id)
+    }
+
+    private fun showHideProgressBar(isVisible: Boolean) {
+        viewBinding.swipeContainer.isRefreshing = isVisible
+    }
+
+    private fun deletePhotoAlert(id: Int) {
+        MaterialAlertDialogBuilder(requireContext())
+            .setIcon(R.drawable.remove)
+            .setTitle(getString(R.string.delete_photo))
+            .setMessage(getString(R.string.are_you_sure))
+            .setPositiveButton(getText(R.string.yes)) { _, _ ->
+                viewModel.deletePhoto(id)
+                toast(requireContext(), getString(R.string.photo_was_deleted_from_favorite))
+            }
+            .setNegativeButton(getString(R.string.no)) { _, _ ->
+            }
+            .show()
+    }
+
 
 }

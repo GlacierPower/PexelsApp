@@ -1,4 +1,4 @@
-package com.glacierpower.pexelsapp.domain
+package com.glacierpower.pexelsapp.domain.pexels
 
 import com.glacierpower.pexelsapp.data.data_base.BookmarksEntity
 import com.glacierpower.pexelsapp.model.CollectionModel
@@ -32,21 +32,22 @@ class PexelsInteractor @Inject constructor(private val pexelsRepository: PexelsR
         return pexelsRepository.getCuratedPhoto(pageNumber)
     }
 
-    suspend fun insertPhoto(page:Int){
+    suspend fun insertPhoto(page: Int) {
         pexelsRepository.insertPhotoCuratedPhoto(page)
     }
 
     suspend fun insertSearchedPhoto(
         query: String,
         pageNumber: Int
-    ){
-        pexelsRepository.insertSearchedPhoto(query,pageNumber)
+    ) {
+        pexelsRepository.insertSearchedPhoto(query, pageNumber)
     }
+
     suspend fun findPhotoById(id: Int) {
         pexelsRepository.findPhotoById(id)
     }
 
-    suspend fun insertPhotoToBookmarksDataBase(id:Int) {
+    suspend fun insertPhotoToBookmarksDataBase(id: Int) {
         val foundItem = pexelsRepository.findPhotoById(id)
         return pexelsRepository.insertPhotoToBookmarksDataBase(foundItem)
     }
@@ -54,5 +55,10 @@ class PexelsInteractor @Inject constructor(private val pexelsRepository: PexelsR
     suspend fun getPhotosFromBookmarksDataBase(): Flow<List<BookmarksEntity>> {
         return pexelsRepository.getPhotosFromBookmarksDataBase()
     }
+
+    suspend fun deleteFormBookmarks(id: Int) {
+        pexelsRepository.deleteFromBookmarks(id)
+    }
+
 }
 

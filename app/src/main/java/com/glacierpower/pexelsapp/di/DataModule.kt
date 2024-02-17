@@ -1,10 +1,12 @@
 package com.glacierpower.pexelsapp.di
 
 import com.glacierpower.pexelsapp.data.repositoryImpl.PexelsRepositoryImpl
+import com.glacierpower.pexelsapp.data.repositoryImpl.SettingRepositoryImpl
 import com.glacierpower.pexelsapp.data.service.GsonDeserializador
 import com.glacierpower.pexelsapp.data.service.PexelsApiService
 import com.glacierpower.pexelsapp.data.service.response.Photo
-import com.glacierpower.pexelsapp.domain.PexelsRepository
+import com.glacierpower.pexelsapp.domain.pexels.PexelsRepository
+import com.glacierpower.pexelsapp.domain.setting.SettingRepository
 import com.glacierpower.pexelsapp.utils.Constants.BASE_URL
 import com.google.gson.GsonBuilder
 import com.google.gson.reflect.TypeToken
@@ -22,6 +24,11 @@ import java.util.concurrent.TimeUnit
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class DataModule {
+
+    @Binds
+    abstract fun bindSettingRepository(
+        settingRepositoryImpl: SettingRepositoryImpl
+    ): SettingRepository
 
     @Binds
     abstract fun bindPexelsRepository(

@@ -1,4 +1,4 @@
-package com.glacierpower.pexelsapp.domain
+package com.glacierpower.pexelsapp.domain.pexels
 
 import com.glacierpower.pexelsapp.data.data_base.BookmarksEntity
 import com.glacierpower.pexelsapp.data.data_base.PhotoEntity
@@ -31,6 +31,10 @@ interface PexelsRepository {
 
     suspend fun insertPhotoToBookmarksDataBase(photoEntity: PhotoEntity)
 
-    suspend fun getPhotosFromBookmarksDataBase():Flow<List<BookmarksEntity>>
+    suspend fun getPhotosFromBookmarksDataBase(): Flow<List<BookmarksEntity>>
+
+    suspend fun deleteFromBookmarks(id: Int)
+
+
 
 }

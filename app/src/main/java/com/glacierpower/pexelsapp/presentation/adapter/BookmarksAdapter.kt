@@ -71,6 +71,10 @@ class BookmarksAdapter(private val bookmarksListener: BookmarksListener) :
         RecyclerView.ViewHolder(bookmarksItemBinding.root) {
         fun bind(bookmarksEntity: BookmarksEntity) {
 
+            bookmarksItemBinding.btnRemove.setOnClickListener {
+                bookmarksListener.deleteFormBookmarks(bookmarksEntity.id)
+            }
+
             val id = bookmarksEntity.id
             bookmarksItemBinding.apply {
                 Glide.with(bookmarksItemBinding.photo)

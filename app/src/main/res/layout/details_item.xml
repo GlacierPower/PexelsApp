@@ -8,6 +8,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
+        android:layout_marginTop="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/margin_details_fragment"
         android:layout_marginEnd="@dimen/margin_details_fragment"
@@ -36,16 +37,16 @@
         android:layout_height="@dimen/bookmark_size"
         android:layout_marginStart="@dimen/btn_margin_details"
         android:layout_marginTop="@dimen/margin_details_fragment"
-        android:background="@drawable/btn_download"
+        android:background="@drawable/btn_download_light"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView" />
 
-    <ImageButton
+    <com.google.android.material.imageview.ShapeableImageView
         android:id="@+id/btn_bookmark"
         android:layout_width="@dimen/bookmark_size"
         android:layout_height="@dimen/bookmark_size"
         android:layout_marginTop="@dimen/margin_details_fragment"
-        android:src="@drawable/bookmark"
+        android:src="@drawable/bookmark_button"
         android:layout_marginEnd="@dimen/btn_margin_details"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/cardView" />

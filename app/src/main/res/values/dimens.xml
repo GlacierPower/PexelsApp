@@ -29,4 +29,6 @@
     <dimen name="author_text_size">20sp</dimen>
     <dimen name="margin_top_bookmarks">65dp</dimen>
     <dimen name="margin_top_progress_bar">80dp</dimen>
+    <dimen name="dark_mode_switch">20dp</dimen>
+    <dimen name="padding_explore_home">370dp</dimen>
 </resources>

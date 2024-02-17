@@ -44,9 +44,16 @@ android {
 }
 
 dependencies {
+
+    //preferences
+    implementation("androidx.preference:preference-ktx:1.1.1")
+
+    // Preference DataStore
+    implementation("androidx.datastore:datastore-preferences:1.0.0-alpha02")
+
     //Splash Screen
     implementation("androidx.core:core-splashscreen:1.0.1")
-    implementation ("com.facebook.shimmer:shimmer:0.5.0")
+    implementation("com.facebook.shimmer:shimmer:0.5.0")
 
     implementation("com.google.ar.sceneform:filament-android:1.17.1")
     implementation("com.android.car.ui:car-ui-lib:2.5.1")
